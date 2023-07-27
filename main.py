@@ -1,7 +1,8 @@
 import tkinter as tk
 import logging
-from binance_futures import get_contracts as binance_get_contracts
-from bitmex_futures import get_contracts as bitmex_get_contracts
+from connectors.binance_futures import BinanceFuturesClient
+from connectors.bitmex_futures import get_contracts as bitmex_get_contracts
+import pprint
 
 # logging used for debugging. 
 logger = logging.getLogger()
@@ -24,6 +25,10 @@ logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 
 if __name__ == '__main__':
+
+    binance = BinanceFuturesClient(True)
+
+    pprint.pprint(binance.get_historical_candles('BTCUSDT', '1h'))
 
     # settings regarding the widget display.
     row_counter = 0
