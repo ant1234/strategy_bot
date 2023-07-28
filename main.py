@@ -34,40 +34,15 @@ logger.addHandler(file_handler)
 
 if __name__ == '__main__':
 
-    binance = BinanceFuturesClient(True)
+    binance = BinanceFuturesClient(testnet_public_key, testnet_secret_key, True)
 
-    # pprint.pprint(binance.get_historical_candles('BTCUSDT', '1h'))
+    # pprint.pprint(binance.get_balanaces())
+    # pprint.pprint(binance.place_order("BTCUSDT", "BUY", 0.01, "LIMIT", 20000, "GTC"))
+    pprint.pprint(binance.cancel_order("BTCUSDT", 3422500904))
 
-    # settings regarding the widget display.
-    row_counter = 0
-    column_counter = 0
-    bitmex_contracts = bitmex_get_contracts()
-    calibre_font = ('calibre', 11, 'normal')
-    
+
     # tkinter ui.
     root = tk.Tk()
-    root.configure(bg='grey12')
-
-    for bitmex_contract in bitmex_contracts:
-
-        # create a widget for displaying bitmex future contracts and styles.
-        label_widget = tk.Label(root, 
-                                text=bitmex_contract,
-                                font=calibre_font, 
-                                bg='grey12',
-                                fg='SteelBlue1',
-                                width=11)
-        
-        label_widget.grid(row=row_counter, 
-                          column=column_counter, 
-                          sticky='ew')
-
-        # style the grid into 5 columns to limit rows all the way down the page.
-        if row_counter == 5:
-            column_counter += 1
-            row_counter = 0
-        else:
-            row_counter += 1
 
     # prevent termination of program after running.
     root.mainloop()
