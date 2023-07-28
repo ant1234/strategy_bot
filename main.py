@@ -1,8 +1,16 @@
 import tkinter as tk
 import logging
-from connectors.binance_futures import BinanceFuturesClient
-from connectors.bitmex_futures import get_contracts as bitmex_get_contracts
 import pprint
+import os
+from connectors.binance_futures import BinanceFuturesClient
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access environment variables
+testnet_public_key = os.environ.get('BINANCE_TESTNET_PUBLIC_KEY')
+testnet_secret_key = os.environ.get('BINANCE_TESTNET_SECRET_KEY')
 
 # logging used for debugging. 
 logger = logging.getLogger()
@@ -28,7 +36,7 @@ if __name__ == '__main__':
 
     binance = BinanceFuturesClient(True)
 
-    pprint.pprint(binance.get_historical_candles('BTCUSDT', '1h'))
+    # pprint.pprint(binance.get_historical_candles('BTCUSDT', '1h'))
 
     # settings regarding the widget display.
     row_counter = 0
