@@ -8,11 +8,14 @@ logger = logging.getLogger()
 # "https://testnet.binancefuture.com"
 
 class BinanceFuturesClient:
-    def __init__(self, testnet):
+    def __init__(self, public_key, secret_key, testnet):
         if testnet:
             self.base_url = "https://testnet.binancefuture.com"
         else:
             self.base_url = "https://fapi.binance.com"
+
+        self.public_key = public_key
+        self.secret_key = secret_key
  
         self.prices = dict()
  
@@ -71,3 +74,15 @@ class BinanceFuturesClient:
                 self.prices[symbol]['ask'] = float(ob_data['askPrice'])
  
         return self.prices[symbol]
+    
+    def get_balanaces(self):
+        return
+    
+    def place_order(self):
+        return
+    
+    def cancel_order(self):
+        return
+    
+    def get_order_status(self):
+        return
