@@ -36,11 +36,6 @@ if __name__ == '__main__':
 
     binance = BinanceFuturesClient(testnet_public_key, testnet_secret_key, True)
 
-    # pprint.pprint(binance.get_balanaces())
-    # pprint.pprint(binance.place_order("BTCUSDT", "BUY", 0.01, "LIMIT", 20000, "GTC"))
-    pprint.pprint(binance.cancel_order("BTCUSDT", 3422500904))
-
-
     # tkinter ui.
     root = tk.Tk()
 
