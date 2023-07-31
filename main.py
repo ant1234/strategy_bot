@@ -42,8 +42,8 @@ if __name__ == '__main__':
     binance = BinanceFuturesClient(binance_testnet_public_key, binance_testnet_secret_key, True)
     bitmex = BitmexFuturesClient(bitmex_testnet_public_key, bitmex_testnet_secret_key, True)
 
-    print(bitmex.contracts['XBTUSD'].base_asset, bitmex.contracts['XBTUSD'].price_decimals)
-    print(bitmex.balances['XBt'].wallet_balance)
+    # print(bitmex.contracts['XBTUSD'].base_asset, bitmex.contracts['XBTUSD'].price_decimals)
+    # print(bitmex.balances['XBt'].wallet_balance)
 
 
     # tkinter ui.

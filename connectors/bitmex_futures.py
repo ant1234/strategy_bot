@@ -117,8 +117,22 @@ class BitmexFuturesClient:
     def cancel_order(self):
         return
 
-    def get_historical_candles(self):
-        return
+    def get_historical_candles(self, contract: Contract, timeframe: str) -> typing.List[Candle]:
+        data = dict()
+        data['symbol'] = contract.symbol
+        data['partial'] = True
+        data['binSize'] = timeframe
+        data['count'] = 500
+ 
+        raw_candles = self._make_request('GET', '/api/v1/trade/bucketed', data)
+ 
+        candles = []
+ 
+        if raw_candles is not None:
+            for c in raw_candles:
+                candles.append(Candle(c, 'bitmex'))
+ 
+        return candles
     
     def _start_ws(self):
         return
