@@ -37,8 +37,8 @@ class BinanceFuturesClient:
         self._ws = None
 
         # Start seperate thread for the binance streaming data
-        t = threading.Thread(target=self._start_ws)
-        t.start()
+        # t = threading.Thread(target=self._start_ws)
+        # t.start()
  
         logger.info("Binance Futures Client successfully initialized")
  
