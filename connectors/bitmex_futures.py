@@ -36,8 +36,8 @@ class BitmexFuturesClient:
         self.prices = dict()
 
         # Start seperate thread for the binance streaming data
-        t = threading.Thread(target=self._start_ws)
-        t.start()
+        # t = threading.Thread(target=self._start_ws)
+        # t.start()
 
         logger.info("Bitmax Futures Client successfully initialized")
 
@@ -162,14 +162,15 @@ class BitmexFuturesClient:
         data['partial'] = True
         data['binSize'] = timeframe
         data['count'] = 500
+        data['reverse'] = True 
  
         raw_candles = self._make_request('GET', '/api/v1/trade/bucketed', data)
  
         candles = []
  
         if raw_candles is not None:
-            for c in raw_candles:
-                candles.append(Candle(c, 'bitmex'))
+            for c in reversed(raw_candles):
+                candles.append(Candle(c, timeframe, 'bitmex'))
  
         return candles
     
