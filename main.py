@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # print(bitmex.get_historical_candles(bitmex.contracts['XBTUSD'], '5m'))
 
-    # print(bitmex.place_order(bitmex.contracts['XBTUSD'], 'Limit', 100, 'Buy', price=20000, tif='GoodTillCancel'))
+    # print(bitmex.place_order(bitmex.contracts['XBTUSD'], 'Limit', 100, 'Buy', price=20000.2324234, tif='GoodTillCancel'))
     # print(bitmex.cancel_order('d98cfcd4-8690-47e4-acc6-dcbfc8108287').status)
 
 

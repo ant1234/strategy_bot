@@ -113,11 +113,11 @@ class BitmexFuturesClient:
         data = dict()
         data['symbol'] = contract.symbol
         data['side'] = side.capitalize()
-        data['orderQty'] = quantity
+        data['orderQty'] = round(quantity / contract.lot_size) * contract.lot_size
         data['ordType'] = order_type.capitalize()
 
         if price is not None:
-            data['price'] = price
+            data['price'] = round(round(price / contract.tick_size) * contract.tick_size, 8)
 
         if tif is not None:
             data['timeInForce'] = tif
@@ -127,7 +127,7 @@ class BitmexFuturesClient:
 
         order_status = self._make_request('POST', '/api/v1/order', data)
         
-        if order_status is None:
+        if order_status is not None:
             order_status = OrderStatus(order_status, 'bitmex')
 
         return order_status
