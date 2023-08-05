@@ -36,8 +36,8 @@ class BitmexFuturesClient:
         self.prices = dict()
 
         # Start seperate thread for the binance streaming data
-        # t = threading.Thread(target=self._start_ws)
-        # t.start()
+        t = threading.Thread(target=self._start_ws)
+        t.start()
 
         logger.info("Bitmax Futures Client successfully initialized")
 
@@ -132,7 +132,7 @@ class BitmexFuturesClient:
 
         return order_status
 
-    def get_order_status(self, order_id: str, contract: Contract):
+    def get_order_status(self, order_id: str, contract: Contract) -> OrderStatus:
 
         data = dict()
         data['symbol'] = contract.symbol
@@ -145,7 +145,7 @@ class BitmexFuturesClient:
                 if order['orderID'] == order_id:
                     return OrderStatus(order, 'bitmex')
 
-    def cancel_order(self, order_id: str):
+    def cancel_order(self, order_id: str) -> OrderStatus:
         data = dict()
         data['orderID'] = order_id
 
@@ -174,21 +174,62 @@ class BitmexFuturesClient:
         return candles
     
     def _start_ws(self):
-        return
+        self._ws = websocket.WebSocketApp(self._wss_url, 
+                                    on_open=self._on_open, 
+                                    on_close=self._on_close, 
+                                    on_error=self._on_error,
+                                    on_message=self._on_message)
+        while True:
+            try:
+                self._ws.run_forever()
+            except Exception as e:
+                logger.error('Bitmex error in run_forever() method: %s', e)
+            time.sleep(2)
+    
+    
+    def _on_open(self, ws):
+        logger.info('Bitmex connection is open')
+        self.subscribe_channel('instrument')
 
-    def _on_open(self):
-        return
+    def _on_close(self, ws):
+        logger.warning('Bitmex connection is closed')
 
-    def _on_close(self):
-        return
+    def _on_error(self, ws, msg: str):
+        logger.error('Bitmex connection error %s', msg)
+
+    def _on_message(self, ws, msg: str):
+
+        data = json.loads(msg)
+
+        if 'table' in data:
+           
+           if data['table'] == 'instrument':
+                for d in data['data']:
+
+                    symbol = d['symbol']
+
+                    if symbol not in self.prices:
+                        self.prices[symbol] = {'bid': None, 'ask': None}
+                    if 'bidPrice' in d:
+                        self.prices[symbol]['bid'] = d['bidPrice']
+                    if 'askPrice' in d:
+                        self.prices[symbol]['ask'] = d['askPrice']
+                    
+                    print(symbol, self.prices[symbol])
+
+    def subscribe_channel(self, topic: str):
+        data = dict()
+        data['op'] = 'subscribe'
+        data['args'] = []
+        data['args'].append(topic)
+
+        try:
+            self._ws.send(json.dumps(data))
+        except Exception as e:
+            logger.error('Websocket error while subscribing to %s : %s', topic, e)
+            return None
         
-    def _on_error(self):
-        return
+    
 
-    def _on_message(self):
-        return
-
-    def _subscribe_channel():
-        return
     
  

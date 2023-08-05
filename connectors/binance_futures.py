@@ -223,7 +223,7 @@ class BinanceFuturesClient:
                 self.prices[symbol]['bid'] = float(data['b'])
                 self.prices[symbol]['ask'] = float(data['a'])
             
-            print(self.prices[symbol])
+            # print(self.prices[symbol])
 
     def subscribe_channel(self, contracts: typing.List[Contract], channel: str):
         data = dict()

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # print(bitmex.balances['XBt'].wallet_balance)
 
     # print(bitmex.place_order(bitmex.contracts['XBTUSD'], 'Limit', 100, 'Buy', price=20000, tif='GoodTillCancel'))
-    print(bitmex.cancel_order('d98cfcd4-8690-47e4-acc6-dcbfc8108287').status)
+    # print(bitmex.cancel_order('d98cfcd4-8690-47e4-acc6-dcbfc8108287').status)
 
 
     # tkinter ui.
