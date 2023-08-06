@@ -35,11 +35,18 @@ class BitmexFuturesClient:
 
         self.prices = dict()
 
+        self.logs = []
+
+
         # Start seperate thread for the binance streaming data
-        # t = threading.Thread(target=self._start_ws)
-        # t.start()
+        t = threading.Thread(target=self._start_ws)
+        t.start()
 
         logger.info("Bitmax Futures Client successfully initialized")
+
+    def _add_log(self, msg: str):
+        logger.info('%s', msg)
+        self.logs.append({'log': msg, 'displayed': False})
 
     def _make_request(self, method: str, endpoint: str, data: typing.Dict):
 
@@ -216,7 +223,8 @@ class BitmexFuturesClient:
                     if 'askPrice' in d:
                         self.prices[symbol]['ask'] = d['askPrice']
                     
-                    print(symbol, self.prices[symbol])
+                    if symbol == 'XBTUSD':
+                        self._add_log(symbol + '  ' + str(self.prices[symbol]['bid'] + self.prices[symbol]['ask']))
 
     def subscribe_channel(self, topic: str):
         data = dict()

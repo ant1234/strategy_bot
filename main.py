@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
 
     # tkinter ui.
-    root = Root()
+    root = Root(binance, bitmex)
 
     # prevent termination of program after running.
     root.mainloop()
