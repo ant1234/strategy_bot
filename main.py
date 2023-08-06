@@ -5,6 +5,7 @@ import os
 from connectors.binance_futures import BinanceFuturesClient
 from connectors.bitmex_futures import BitmexFuturesClient
 from dotenv import load_dotenv
+from interface.root_component import Root
 
 # Load environment variables from .env file
 load_dotenv()
@@ -52,7 +53,7 @@ if __name__ == '__main__':
 
 
     # tkinter ui.
-    root = tk.Tk()
+    root = Root()
 
     # prevent termination of program after running.
     root.mainloop()
