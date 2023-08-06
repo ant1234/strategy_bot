@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 from interface.styling import *
 from interface.logging_component import Logging
+from interface.watchlist_component import WatchList
 from connectors.binance_futures import BinanceFuturesClient
 from connectors.bitmex_futures import BitmexFuturesClient
 
@@ -11,6 +12,9 @@ class Root(tk.Tk):
 
         self.binance = binance
         self.bitmex = bitmex
+
+        self.binance_contracts = binance.contracts
+        self.bitmex_contracts = bitmex.contracts
 
         # title
         self.title('Trading Bot')
@@ -24,6 +28,9 @@ class Root(tk.Tk):
 
         self._right_frame = tk.Frame(self, bg=BG_COLOUR)
         self._right_frame.pack(side=tk.LEFT)
+
+        self._watchlist_frame = WatchList(self.binance_contracts, self.bitmex_contracts, self._left_frame)
+        self._watchlist_frame.pack(side=tk.TOP)
 
         self._logging_frame = Logging(self._left_frame)
         self._logging_frame.pack(side=tk.TOP)
