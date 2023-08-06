@@ -39,8 +39,8 @@ class BinanceFuturesClient:
         self.logs = []
 
         # Start seperate thread for the binance streaming data
-        # t = threading.Thread(target=self._start_ws)
-        # t.start()
+        t = threading.Thread(target=self._start_ws)
+        t.start()
  
         logger.info("Binance Futures Client successfully initialized")
 
@@ -206,7 +206,7 @@ class BinanceFuturesClient:
     
     def _on_open(self, ws):
         logger.info('Binance connection is open')
-        self.subscribe_channel(list(self.contracts.values()), 'bookTicker')
+        self.subscribe_channel(list(self.contracts.values())[:100], 'bookTicker')
 
     def _on_close(self, ws):
         logger.warning('Binance connection is closed')
