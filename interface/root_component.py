@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from interface.styling import *
 from interface.logging_component import Logging
 
