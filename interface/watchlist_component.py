@@ -34,10 +34,10 @@ class WatchList(tk.Frame):
 
         self.body_widgets = dict()
 
-        self._headers = ['symbol', 'exchange', 'bid', 'ask']
+        self._headers = ['symbol', 'exchange', 'bid', 'ask', 'remove']
 
         for idx, h in enumerate(self._headers):
-            header = tk.Label(self._table_frame, text=h.capitalize(), bg=BG_COLOUR, fg=FG_COLOUR, font=BOLD_FONT)
+            header = tk.Label(self._table_frame, text=h.capitalize() if h != "remove" else "", bg=BG_COLOUR, fg=FG_COLOUR, font=BOLD_FONT)
             header.grid(row=0, column=idx)
 
         for h in self._headers:
@@ -46,6 +46,12 @@ class WatchList(tk.Frame):
                 self.body_widgets[h + '_var'] = dict()
 
         self._body_index = 1
+
+    def _remove_symbol(self, b_index: int):
+
+        for h in self._headers: 
+            self.body_widgets[h][b_index].grid_forget()
+            del self.body_widgets[h][b_index]
 
     def _add_binance_symbol(self, event):
 
@@ -100,6 +106,15 @@ class WatchList(tk.Frame):
                                                 fg=FG_COLOUR_2, 
                                                 font=GLOBAL_FONT)
         self.body_widgets['ask'][b_index].grid(row=b_index, column=3)
+
+        self.body_widgets['remove'][b_index] = tk.Button(
+                                                self._table_frame, 
+                                                text='Delete', 
+                                                bg='darkred', 
+                                                fg=FG_COLOUR, 
+                                                font=GLOBAL_FONT,
+                                                command=lambda: self._remove_symbol(b_index))
+        self.body_widgets['remove'][b_index].grid(row=b_index, column=4)
 
         self._body_index += 1
         
