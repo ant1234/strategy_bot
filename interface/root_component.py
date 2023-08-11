@@ -1,10 +1,13 @@
 import tkinter as tk
 import time
+import logging
 from interface.styling import *
 from interface.logging_component import Logging
 from interface.watchlist_component import WatchList
 from connectors.binance_futures import BinanceFuturesClient
 from connectors.bitmex_futures import BitmexFuturesClient
+
+logger = logging.getLogger()
 
 class Root(tk.Tk):
     def __init__(self, binance: BinanceFuturesClient, bitmex: BitmexFuturesClient):
@@ -53,38 +56,48 @@ class Root(tk.Tk):
 
         # watchlist prices
 
-        for key, value in self._watchlist_frame.body_widgets['symbol']. items():
+        try: 
+            for key, value in self._watchlist_frame.body_widgets['symbol']. items():
 
-            symbol = self._watchlist_frame.body_widgets['symbol'][key].cget('text')
-            exchange = self._watchlist_frame.body_widgets['exchange'][key].cget('text')
+                symbol = self._watchlist_frame.body_widgets['symbol'][key].cget('text')
+                exchange = self._watchlist_frame.body_widgets['exchange'][key].cget('text')
 
-            if exchange == 'Binance':
-                if symbol not in self.binance.contracts:
+                if exchange == 'Binance':
+                    if symbol not in self.binance.contracts:
+                        continue
+
+                    if symbol not in self.binance.prices:
+                        self.binance.get_bid_ask(self.binance.contracts[symbol])
+                        continue
+
+                    precision = self.binance.contracts[symbol].price_decimals
+
+                    prices = self.binance.prices[symbol]
+
+                elif exchange == 'Bitmex':
+                    if symbol not in self.bitmex.contracts:
+                        continue
+
+                    if symbol not in self.bitmex.prices:
+                        continue
+
+                    precision = self.bitmex.contracts[symbol].price_decimals
+
+                    prices = self.bitmex.prices[symbol]
+
+                else:
                     continue
 
-                if symbol not in self.binance.prices:
-                    self.binance.get_bid_ask(self.binance.contracts[symbol])
-                    continue
+                if prices['bid'] is not None:
+                    price_str = "{0:.{prec}f}".format(prices['bid'], prec=precision)
+                    self._watchlist_frame.body_widgets['bid_var'][key].set(price_str)
 
-                prices = self.binance.prices[symbol]
+                if prices['ask'] is not None:
+                    price_str = "{0:.{prec}f}".format(prices['ask'], prec=precision)
+                    self._watchlist_frame.body_widgets['ask_var'][key].set(price_str)
 
-            elif exchange == 'Bitmex':
-                if symbol not in self.bitmex.contracts:
-                    continue
-
-                if symbol not in self.bitmex.prices:
-                    continue
-
-                prices = self.bitmex.prices[symbol]
-
-            else:
-                continue
-
-            if prices['bid'] is not None:
-                self._watchlist_frame.body_widgets['bid_var'][key].set(prices['bid'])
-
-            if prices['ask'] is not None:
-                self._watchlist_frame.body_widgets['ask_var'][key].set(prices['ask'])
+        except RuntimeError as e:
+            logger.error('Error while looping through the watchlist dictionary, %s', e)
 
 
             
