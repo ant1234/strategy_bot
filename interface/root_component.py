@@ -51,7 +51,40 @@ class Root(tk.Tk):
 
         self.after(1500, self._update_ui)
 
+        # watchlist prices
 
+        for key, value in self._watchlist_frame.body_widgets['symbol']. items():
+
+            symbol = self._watchlist_frame.body_widgets['symbol'][key].cget('text')
+            exchange = self._watchlist_frame.body_widgets['exchange'][key].cget('text')
+
+            if exchange == 'Binance':
+                if symbol not in self.binance.contracts:
+                    continue
+
+                if symbol not in self.binance.prices:
+                    self.binance.get_bid_ask(self.binance.contracts[symbol])
+                    continue
+
+                prices = self.binance.prices[symbol]
+
+            elif exchange == 'Bitmex':
+                if symbol not in self.bitmex.contracts:
+                    continue
+
+                if symbol not in self.bitmex.prices:
+                    continue
+
+                prices = self.bitmex.prices[symbol]
+
+            else:
+                continue
+
+            if prices['bid'] is not None:
+                self._watchlist_frame.body_widgets['bid_var'][key].set(prices['bid'])
+
+            if prices['ask'] is not None:
+                self._watchlist_frame.body_widgets['ask_var'][key].set(prices['ask'])
 
 
             
