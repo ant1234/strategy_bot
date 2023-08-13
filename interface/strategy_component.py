@@ -1,6 +1,8 @@
 import tkinter as tk 
 import typing
 from interface.styling import *
+from connectors.binance_futures import BinanceFuturesClient
+from connectors.bitmex_futures import BitmexFuturesClient
 
 class StrategyEditor(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -48,26 +50,28 @@ class StrategyEditor(tk.Frame):
     def _add_strategy_row(self):
         b_index = self._body_index
 
-        for col, base_params in enumerate(self._base_params):
-            code_name = base_params['code_name']
-            if base_params['widget'] == tk.OptionMenu:
-                self.body_widgets['code_name' + '_var'][b_index] = tk.StringVar()
-                self.body_widgets[code_name][b_index] = tk.OptionMenu(self._table_frame, self.body_widgets['code_name' + '_var'][b_index], *self._base_params['values'])
+        for col, base_param in enumerate(self._base_params):
+            code_name = base_param['code_name']
+            if base_param['widget'] == tk.OptionMenu:
+                self.body_widgets[code_name + '_var'][b_index] = tk.StringVar()
+                self.body_widgets[code_name][b_index] = tk.OptionMenu(self._table_frame,
+                                                                      self.body_widgets[code_name + "_var"][b_index],
+                                                                      *base_param['values'])
                  
-                self.body_widgets[code_name][b_index].config(width=base_params['width'])
+                self.body_widgets[code_name][b_index].config(width=base_param['width'])
                                                                       
-            elif base_params['widget'] == tk.Entry:
+            elif base_param['widget'] == tk.Entry:
                 self.body_widgets[code_name][b_index] = tk.Entry(self._table_frame, justify=tk.CENTER)
 
-            elif base_params['widget'] == tk.Button:
-                self.body_widgets[code_name][b_index] = tk.Button(self._table_frame, text=base_params['text'], 
-                                                                  bg=base_params['bg'], 
+            elif base_param['widget'] == tk.Button:
+                self.body_widgets[code_name][b_index] = tk.Button(self._table_frame, text=base_param['text'], 
+                                                                  bg=base_param['bg'], 
                                                                   fg=FG_COLOUR, 
-                                                                  command=lambda: base_params['command'](b_index))
+                                                                  command=lambda: base_param['command'](b_index))
             else:
                 continue
 
-            self.body_widgets[code_name][b_index].grid(row=b_index,)
+            self.body_widgets[code_name][b_index].grid(row=b_index, column=col)
 
         self._body_index += 1
 

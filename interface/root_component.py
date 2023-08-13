@@ -40,8 +40,8 @@ class Root(tk.Tk):
         self._logging_frame = Logging(self._left_frame)
         self._logging_frame.pack(side=tk.TOP)
 
-        self._logging_frame = StrategyEditor(self._right_frame, bg=BG_COLOUR)
-        self._logging_frame.pack(side=tk.TOP)
+        self._strategy_frame = StrategyEditor(self._right_frame, bg=BG_COLOUR)
+        self._strategy_frame.pack(side=tk.TOP)
 
         self._trades_frame = TradeWatch(self._right_frame, bg=BG_COLOUR)
         self._trades_frame.pack(side=tk.TOP)
