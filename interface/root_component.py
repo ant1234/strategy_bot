@@ -37,10 +37,10 @@ class Root(tk.Tk):
         self._watchlist_frame = WatchList(self.binance_contracts, self.bitmex_contracts, self._left_frame)
         self._watchlist_frame.pack(side=tk.TOP)
 
-        self._logging_frame = Logging(self._left_frame)
-        self._logging_frame.pack(side=tk.TOP)
+        self.logging_frame = Logging(self._left_frame)
+        self.logging_frame.pack(side=tk.TOP)
 
-        self._strategy_frame = StrategyEditor(self._right_frame, bg=BG_COLOUR)
+        self._strategy_frame = StrategyEditor(self, self.binance, self.bitmex, self._right_frame, bg=BG_COLOUR)
         self._strategy_frame.pack(side=tk.TOP)
 
         self._trades_frame = TradeWatch(self._right_frame, bg=BG_COLOUR)
@@ -52,12 +52,12 @@ class Root(tk.Tk):
 
         for log in self.bitmex.logs:
             if not log['displayed']:
-                self._logging_frame.add_log(log['log'])
+                self.logging_frame.add_log(log['log'])
                 log['displayed'] = True
 
         for log in self.binance.logs:
             if not log['displayed']:
-                self._logging_frame.add_log(log['log'])
+                self.logging_frame.add_log(log['log'])
                 log['displayed'] = True
 
         self.after(1500, self._update_ui)
