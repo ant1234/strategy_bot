@@ -1,5 +1,5 @@
 import logging
-from typing import *
+import typing
 from models import *
 
 logger = logging.getLogger()
@@ -24,12 +24,13 @@ class Strategy:
         self.stop_loss = stop_loss
         self.candles: List[Candle] = []
 
-    def parse_trades(self, price: float, size: float, timestamp: int):
+    def parse_trades(self, price: float, size: float, timestamp: int) -> str:
         
         last_candle = self.candles[-1]
 
         # same candle 
         if timestamp < last_candle.timestamp * self.tf_equiv:
+            
             last_candle.close = price
             last_candle.volume += size
 
@@ -38,15 +39,39 @@ class Strategy:
             elif price < last_candle.low:
                 last_candle.low = price
 
+            return 'same_candle'
+
         # missing candle(s)
         elif timestamp >= last_candle.timestamp + 2 * self.tf_equiv:
-            return
+
+            missing_candles = int((timestamp - last_candle.timestamp) / self.tf_equiv) - 1
+            logger.info('%s missing %s candles for %s %s (%s %s)', self.exchange, missing_candles, self.contract.symbol, self.tf, timestamp, last_candle.timestamp)
+
+            for missing in range(missing_candles):
+                new_ts = last_candle.timestamp + self.tf_equiv
+                candle_info = {'ts': new_ts, 'open': last_candle.close, 'high': last_candle.close, 'low': last_candle.close, 'close': last_candle.close, 'volume': 0}
+                new_candle = Candle(candle_info, self.tf, 'parse_trade')
+                self.candles.append(new_candle)
+                last_candle = new_candle
+
+            new_ts = last_candle.timestamp + self.tf_equiv
+            candle_info = {'ts': new_ts, 'open': price, 'high': price, 'low': price, 'close': price, 'volume': size}
+            new_candle = Candle(candle_info, self.tf, 'parse_trade')
+            self.candles.append(new_candle)
+
+            return 'new_candle'
 
         # new candle
         elif timestamp >= last_candle.timestamp + self.tf_equiv:
-            return
 
+            new_ts = last_candle.timestamp + self.tf_equiv
+            candle_info = {'ts': new_ts, 'open': price, 'high': price, 'low': price, 'close': price, 'volume': size}
+            new_candle = Candle(candle_info, self.tf, 'parse_trade')
+            self.candles.append(new_candle)
+            logger.info('%s new candle for %s %s', self.exchange, self.contract.symbol, self.tf)
 
+            return 'new_candle'
+        
 class TechnicalStrategy(Strategy):
     def __init__(self, 
                  contract: Contract, 
