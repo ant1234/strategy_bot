@@ -1,6 +1,7 @@
 import logging
 import typing
 from models import *
+import pandas as pd
 
 logger = logging.getLogger()
 
@@ -22,7 +23,7 @@ class Strategy:
         self.balance_pct = balance_pct
         self.take_profit = take_profit
         self.stop_loss = stop_loss
-        self.candles: List[Candle] = []
+        self.candles: typing.List[Candle] = []
 
     def parse_trades(self, price: float, size: float, timestamp: int) -> str:
         
@@ -80,7 +81,7 @@ class TechnicalStrategy(Strategy):
                  balance_pct: float, 
                  take_profit: float,
                  stop_loss: float,
-                 other_params: Dict):
+                 other_params: typing.Dict):
     
         super().__init__(contract,
                         exchange,
@@ -94,6 +95,30 @@ class TechnicalStrategy(Strategy):
         self._ema_signal = other_params['ema_signal']
 
         print("Activated strategy for ", contract.symbol)
+
+        def _rsi(self):
+            return
+        
+        def _macd(self) -> typing.Tuple[float, float]:
+
+            close_list = []
+            for candle in self.candles:
+                close_list.append(candle.close)
+
+            closes = pd.Series(close_list)
+
+            ema_fast = closes.ewm(span=self._ema_fast).mean()
+            ema_slow = closes.ewm(span=self._ema_slow).mean()
+
+            macd_line = ema_fast - ema_slow
+            macd_signal = macd_line.ewm(span=self._ema_signal).mean()
+
+            return macd_line[-2], macd_signal[-2]
+        
+        def _check_signal(self):
+
+            macd_line, macd_signal = self._macd()
+
  
 class BreakoutStrategy(Strategy):
     def __init__(self, 
@@ -113,4 +138,20 @@ class BreakoutStrategy(Strategy):
                         stop_loss)
         
         self._minimum_volume = other_params['minimum_volume']
+
+        def _check_signal(self) -> int:
+
+            if self.candles[-1].close > self.candles[-2].high and self.candles[-1].volume > self._min_volume:
+                return 1
+            elif self.candles[-1].close < self.candles[-2].low and self.candles[-1].volume > self._min_volume:
+                return -1
+            else:
+                return 0
+            
+            # inside bar pattern 
+            # if self.candles[-2].high < self.candles[-3].high and self.candles[-2].low > self.candles[-3].low:
+            #     if self.candles[-1].close > self.candles[-3].high:
+            #         # upside breakout
+            #     elif self.candles[-1].close < self.candles[-3].low:
+            #         # downside breakout
     
