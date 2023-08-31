@@ -221,23 +221,23 @@ class BinanceFuturesClient:
 
         data = json.loads(msg)
 
-        if 'e' in data:
-           if data['e'] == 'bookTicker':
+        if "e" in data:
+            if data['e'] == "bookTicker":
 
-            symbol = data['s']
+                symbol = data['s']
 
-            if symbol not in self.prices:
-                self.prices[symbol] = {'bid': float(data['b']), 'ask': float(data['a'])}
-            else:
-                self.prices[symbol]['bid'] = float(data['b'])
-                self.prices[symbol]['ask'] = float(data['a'])
+                if symbol not in self.prices:
+                    self.prices[symbol] = {'bid': float(data['b']), 'ask': float(data['a'])}
+                else:
+                    self.prices[symbol]['bid'] = float(data['b'])
+                    self.prices[symbol]['ask'] = float(data['a'])
             
-        elif data['e'] == 'aggTrade':
-            symbol = data['s']
+            elif data['e'] == 'aggTrade':
+                symbol = data['s']
 
-            for key, strat in self.strategies.items():
-                if strat.contract.symbol == symbol:
-                    strat.parse_trades(float(data['p']), float(data['a']), data['T'])
+                for key, strat in self.strategies.items():
+                    if strat.contract.symbol == symbol:
+                        strat.parse_trades(float(data['p']), float(data['a']), data['T'])
 
     def subscribe_channel(self, contracts: typing.List[Contract], channel: str):
         data = dict()

@@ -49,6 +49,7 @@ class StrategyEditor(tk.Frame):
 
         self._extra_params = {
             'Technical': [
+                {'code_name': 'rsi_length', 'name': 'RSI Periods', 'widget': tk.Entry, 'data_type': int},
                 {'code_name': 'ema_fast', 'name': 'MACD Fast Length', 'widget': tk.Entry, 'data_type': int},
                 {'code_name': 'ema_slow', 'name': 'MACD Slow Length', 'widget': tk.Entry, 'data_type': int},
                 {'code_name': 'ema_signal', 'name': 'MACD Signal Length', 'widget': tk.Entry, 'data_type': int},
@@ -92,7 +93,7 @@ class StrategyEditor(tk.Frame):
                 self.body_widgets[code_name][b_index] = tk.Button(self._table_frame, text=base_param['text'], 
                                                                   bg=base_param['bg'], 
                                                                   fg=FG_COLOUR, 
-                                                                  command=lambda frozen_command=base_param['command']:frozen_command(b_index))
+                                                                  command=lambda frozen_command=base_param['command']: frozen_command(b_index))
             else:
                 continue
 
@@ -190,6 +191,8 @@ class StrategyEditor(tk.Frame):
             if len(new_strategy.candles) == 0:
                 self.root_logging_frame.add_log(f"No historical data retrieved for {contract.symbol}")
                 return
+            
+            new_strategy._check_signal()
             
             if exchange == "Binance":
                 self._exchanges[exchange].subscribe_channel([contract], "aggTrade")
