@@ -209,8 +209,9 @@ class StrategyEditor(tk.Frame):
             self.root.logging_frame.add_log(f'{strat_selected} strategy on {symbol} / {timeframe} started.')
 
         else:
-
-            del self._exchanges[exchange].strategies[b_index]
+            print(exchange)
+            if self._exchanges[exchange].strategies:
+                del self._exchanges[exchange].strategies[b_index]
 
             for param in self._base_params:
                 code_name = param['code_name']
