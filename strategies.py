@@ -10,6 +10,7 @@ TF_EQUIV = {'1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '4h': 1440
 
 class Strategy:
     def __init__(self, 
+                 client,
                  contract: Contract, 
                  exchange: str, 
                  timeframe: str, 
@@ -17,6 +18,7 @@ class Strategy:
                  take_profit: float,
                  stop_loss: float):
         
+        self.client = client
         self.contract = contract
         self.exchange = exchange
         self.tf = timeframe
@@ -24,10 +26,14 @@ class Strategy:
         self.balance_pct = balance_pct
         self.take_profit = take_profit
         self.stop_loss = stop_loss
+        self.open_position = False
         self.candles: List[Candle] = []
 
     def parse_trades(self, price: float, size: float, timestamp: int) -> str:
         
+        timestamp_diff = int(time.time() * 1000) - timestamp
+        if timestamp_diff >= 2000:
+            logger.warning('%s %s: %s milliseconds of difference between the current time and the trade time.', self.exchange, self.contract.symbol, timestamp_diff)
         last_candle = self.candles[-1]
 
         # same candle 
@@ -73,9 +79,16 @@ class Strategy:
             logger.info('%s new candle for %s %s', self.exchange, self.contract.symbol, self.tf)
 
             return 'new_candle'
+    
+    def _open_position(self, signal_result: int):
+        trade_size = self.client.get_trade_size(self.contract, self.candles[-1].close, self.balance_pct)
+        if trade_size is None:
+            return
+
         
 class TechnicalStrategy(Strategy):
     def __init__(self, 
+                 client,
                  contract: Contract, 
                  exchange: str, 
                  timeframe: str, 
@@ -84,7 +97,8 @@ class TechnicalStrategy(Strategy):
                  stop_loss: float,
                  other_params: Dict):
     
-        super().__init__(contract,
+        super().__init__(client,
+                        contract,
                         exchange,
                         timeframe,
                         balance_pct,
@@ -149,9 +163,18 @@ class TechnicalStrategy(Strategy):
             return -1
         else:
             return 0
+        
+    def check_trade(self, tick_type: str):
+
+        if tick_type == 'new_candle' and not self.open_position:
+            signal_result = self._check_signal()
+
+            if signal_result in [-1, 1]:
+                self.open_position(signal_result)
 
 class BreakoutStrategy(Strategy):
     def __init__(self, 
+                 client,
                  contract: Contract, 
                  exchange: str, 
                  timeframe: str, 
@@ -160,7 +183,8 @@ class BreakoutStrategy(Strategy):
                  stop_loss: float,
                  other_params: Dict):
     
-        super().__init__(contract,
+        super().__init__(client,
+                        contract,
                         exchange,
                         timeframe,
                         balance_pct,
@@ -184,3 +208,10 @@ class BreakoutStrategy(Strategy):
         #         # upside breakout
         #     elif self.candles[-1].close < self.candles[-3].low:
         #         # downside breakout
+
+    def check_trade(self, tick_type: str):
+        if not self.open_position:
+            signal_result = self._check_signal()
+
+            if signal_result in [-1, 1]:
+                self.open_position(signal_result)

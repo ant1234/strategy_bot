@@ -236,8 +236,9 @@ class BitmexFuturesClient:
 
                     for key, strat in self.strategies.items():
                         if strat.contract.symbol == symbol:
-                            strat.parse_trades(float(d['price']), float(d['size']), ts)
-
+                           res = strat.parse_trades(float(d['price']), float(d['size']), ts)
+                           strat.check_trade(res)
+                           
     def subscribe_channel(self, topic: str):
         data = dict()
         data['op'] = 'subscribe'
@@ -250,6 +251,30 @@ class BitmexFuturesClient:
             logger.error('Websocket error while subscribing to %s : %s', topic, e)
             return None
         
+    def get_trade_size(self, contract: Contract, price: float, balance_pct: float):
+        
+        balance = self.get_balanaces()
+        
+        if balance is not None:
+            if 'XBt' in balance:
+                balance = balance['XBt'].wallet_balance
+            else:
+                return None
+        else:
+            return None
+        
+        xbt_size = balance * balance_pct / 100
+
+        if contract.inverse:
+            contract_number = xbt_size / (contract.multiplier / price)
+        elif contract.quanto:
+            contract_number = xbt_size / (contract.multiplier * price)
+        else:
+            contract_number = xbt_size / (contract.multiplier * price)
+
+        logger.info("Bitmex current XBt balance = %s, contracts number = %s", balance, contract_number)
+
+        return int(contract_number)
     
 
     
