@@ -2,6 +2,7 @@ import logging
 from typing import *
 from models import *
 from threading import Timer
+import time
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -255,7 +256,7 @@ class BreakoutStrategy(Strategy):
                         stop_loss,
                         'Breakout')
         
-        self._minimum_volume = other_params['minimum_volume']
+        self._min_volume = other_params['min_volume']
 
     def _check_signal(self) -> int:
 
@@ -278,4 +279,4 @@ class BreakoutStrategy(Strategy):
             signal_result = self._check_signal()
 
             if signal_result in [-1, 1]:
-                self.open_position(signal_result)
+                self._open_position(signal_result)
