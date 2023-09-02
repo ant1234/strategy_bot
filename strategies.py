@@ -120,12 +120,12 @@ class Strategy:
         order_side = 'buy' if signal_result == 1 else 'sell'
         position_side = 'long' if signal_result == 1 else 'short'
 
-        self._add_log(f'{position_side} signal on {self.contract.symbol} {self.tf}')
+        self._add_logs(f'{position_side.capitalize()} signal on {self.contract.symbol} {self.tf}')
         order_status = self.client.place_order(self.contract, 'MARKET', trade_size, order_side)
 
         if order_status is not None:
 
-            self._add_logs(f'{order_side.capitalized()} order placed on {self.exchange} | Status: {order_status.status}')
+            self._add_logs(f'{order_side.capitalize()} order placed on {self.exchange} | Status: {order_status.status}')
             self.ongoing_position = True
             avg_fill_price = None
 
