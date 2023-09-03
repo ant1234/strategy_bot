@@ -62,6 +62,31 @@ class Root(tk.Tk):
 
         self.after(1500, self._update_ui)
 
+        for client in [self.binance, self.bitmex]:
+            try:
+                for b_index, strat in client.strategies.items():
+                    for log in strat.logs:
+                        if not log['displayed']:
+                            self.logging_frame.add_log(log['log'])
+                            log['displayed'] = True
+
+                    for trade in strat.trades:
+                        if trade.time not in self._trades_frame.body_widgets['symbol']:
+                            self._trades_frame.add_trade(trade)
+
+                        if trade.contract.exchange == 'bitmex':
+                            precision = trade.contract.price.decimals 
+                        else:
+                            precision = 8
+
+                        pnl_str = '{0:.{prec}}f}'.format(trade.pnl, prec=precision)
+                        self._trades_frame.body_widgets['pnl_var'][trade.time].set(pnl_str)
+                        self._trades_frame.body_widgets['status_var'][trade.time].set(trade.status.capitalize())
+
+
+            except RuntimeError as e:
+                logger.error('Error while looping through the strategies dictionary, %s', e)
+
         # watchlist prices
 
         try: 

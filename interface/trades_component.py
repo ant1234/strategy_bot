@@ -1,5 +1,7 @@
 import tkinter as tk
 import typing
+from models import *
+
 
 from interface.styling import * 
 
@@ -25,27 +27,27 @@ class TradeWatch(tk.Frame):
 
         self._body_index = 1
 
-    def add_trade(self, data: typing.Dict):
+    def add_trade(self, trade: Trade):
 
         b_index = self._body_index
-        t_index = data['time']
+        t_index = trade.time
 
-        self.body_widgets['time'][t_index] = tk.Label(self._table_frame, text=data['time'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['time'][t_index] = tk.Label(self._table_frame, text=trade.time, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['time'][t_index].grid(row=b_index, column=0)
 
-        self.body_widgets['symbol'][t_index] = tk.Label(self._table_frame, text=data['symbol'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['symbol'][t_index] = tk.Label(self._table_frame, text=trade.contract.symbol, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['symbol'][t_index].grid(row=b_index, column=1)
 
-        self.body_widgets['exchange'][t_index] = tk.Label(self._table_frame, text=data['exchange'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['exchange'][t_index] = tk.Label(self._table_frame, text=trade.contract.exchange.capitalize(), bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['exchange'][t_index].grid(row=b_index, column=2)
 
-        self.body_widgets['strategy'][t_index] = tk.Label(self._table_frame, text=data['strategy'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['strategy'][t_index] = tk.Label(self._table_frame, text=trade.strategy, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['strategy'][t_index].grid(row=b_index, column=3)
 
-        self.body_widgets['side'][t_index] = tk.Label(self._table_frame, text=data['side'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['side'][t_index] = tk.Label(self._table_frame, text=trade.side.capitalize(), bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['side'][t_index].grid(row=b_index, column=4)
 
-        self.body_widgets['quantity'][t_index] = tk.Label(self._table_frame, text=data['quantity'], bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        self.body_widgets['quantity'][t_index] = tk.Label(self._table_frame, text=trade.quantity, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['quantity'][t_index].grid(row=b_index, column=5)
 
         self.body_widgets['status_var'][t_index] = tk.StringVar()
