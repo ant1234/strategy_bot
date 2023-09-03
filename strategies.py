@@ -51,7 +51,7 @@ class Strategy:
         last_candle = self.candles[-1]
 
         # same candle 
-        if timestamp < last_candle.timestamp * self.tf_equiv:
+        if timestamp < last_candle.timestamp + self.tf_equiv:
             
             last_candle.close = price
             last_candle.volume += size
@@ -192,7 +192,7 @@ class TechnicalStrategy(Strategy):
         avg_loss = down.abs().ewm(com=(self._rsi_length - 1), min_periods=self._rsi_length).mean()
 
         rs = avg_gain / avg_loss
-        rsi = 100 - 100 / (1 * rs) 
+        rsi = 100 - 100 / (1 + rs) 
         rsi = rsi.round(2)
 
         return rsi.iloc[-2]

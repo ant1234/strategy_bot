@@ -29,6 +29,8 @@ class TradeWatch(tk.Frame):
 
     def add_trade(self, trade: Trade):
 
+        print('gets to add trade start')
+
         b_index = self._body_index
         t_index = trade.time
 
@@ -61,3 +63,6 @@ class TradeWatch(tk.Frame):
         self.body_widgets['pnl'][t_index].grid(row=b_index, column=7)
 
         self._body_index += 1
+
+        print('gets to add trade end')
+

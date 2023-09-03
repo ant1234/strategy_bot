@@ -34,10 +34,10 @@ class Root(tk.Tk):
         self._right_frame = tk.Frame(self, bg=BG_COLOUR)
         self._right_frame.pack(side=tk.LEFT)
 
-        self._watchlist_frame = WatchList(self.binance_contracts, self.bitmex_contracts, self._left_frame)
+        self._watchlist_frame = WatchList(self.binance_contracts, self.bitmex_contracts, self._left_frame, bg=BG_COLOUR)
         self._watchlist_frame.pack(side=tk.TOP)
 
-        self.logging_frame = Logging(self._left_frame)
+        self.logging_frame = Logging(self._left_frame, bg=BG_COLOUR)
         self.logging_frame.pack(side=tk.TOP)
 
         self._strategy_frame = StrategyEditor(self, self.binance, self.bitmex, self._right_frame, bg=BG_COLOUR)
@@ -60,8 +60,6 @@ class Root(tk.Tk):
                 self.logging_frame.add_log(log['log'])
                 log['displayed'] = True
 
-        self.after(1500, self._update_ui)
-
         for client in [self.binance, self.bitmex]:
             try:
                 for b_index, strat in client.strategies.items():
@@ -74,23 +72,23 @@ class Root(tk.Tk):
                         if trade.time not in self._trades_frame.body_widgets['symbol']:
                             self._trades_frame.add_trade(trade)
 
-                        if trade.contract.exchange == 'bitmex':
+                        if trade.contract.exchange == 'binance':
                             precision = trade.contract.price.decimals 
                         else:
                             precision = 8
 
-                        pnl_str = '{0:.{prec}}f}'.format(trade.pnl, prec=precision)
+                        pnl_str = '{0:.{prec}f}'.format(trade.pnl, prec=precision)
                         self._trades_frame.body_widgets['pnl_var'][trade.time].set(pnl_str)
                         self._trades_frame.body_widgets['status_var'][trade.time].set(trade.status.capitalize())
 
 
             except RuntimeError as e:
-                logger.error('Error while looping through the strategies dictionary, %s', e)
+                logger.error('Error while looping through the strategies dictionary: %s', e)
 
         # watchlist prices
 
         try: 
-            for key, value in self._watchlist_frame.body_widgets['symbol']. items():
+            for key, value in self._watchlist_frame.body_widgets['symbol'].items():
 
                 symbol = self._watchlist_frame.body_widgets['symbol'][key].cget('text')
                 exchange = self._watchlist_frame.body_widgets['exchange'][key].cget('text')
@@ -131,6 +129,9 @@ class Root(tk.Tk):
 
         except RuntimeError as e:
             logger.error('Error while looping through the watchlist dictionary, %s', e)
+
+        self.after(1500, self._update_ui)
+
 
 
             
