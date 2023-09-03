@@ -32,7 +32,9 @@ class TradeWatch(tk.Frame):
         b_index = self._body_index
         t_index = trade.time
 
-        self.body_widgets['time'][t_index] = tk.Label(self._table_frame, text=trade.time, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
+        dt_str = datetime.datetime.fromtimestamp(trade.time / 1000).strftime('%b %d %H:%M')
+
+        self.body_widgets['time'][t_index] = tk.Label(self._table_frame, text=dt_str, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
         self.body_widgets['time'][t_index].grid(row=b_index, column=0)
 
         self.body_widgets['symbol'][t_index] = tk.Label(self._table_frame, text=trade.contract.symbol, bg=BG_COLOUR, fg=FG_COLOUR_2, font=GLOBAL_FONT)
