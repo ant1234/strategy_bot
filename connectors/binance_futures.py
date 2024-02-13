@@ -1,6 +1,8 @@
 import logging
 import requests
 import pprint
+import os
+from dotenv import load_dotenv
 import time
 import hmac
 import hashlib
@@ -11,6 +13,9 @@ import json
 import typing
 from models import *
 from strategies import TechnicalStrategy, BreakoutStrategy
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger()
 
@@ -26,8 +31,8 @@ class BinanceFuturesClient:
             self._base_url = "https://fapi.binance.com"
             self._wss_url = "wws://fstream.binance.com/ws"
 
-        self._public_key = public_key
-        self._secret_key = secret_key
+        self._public_key = os.environ.get('BINANCE_TESTNET_PUBLIC_KEY')
+        self._secret_key = os.environ.get('BINANCE_TESTNET_SECRET_KEY')
         self._headers = {'X-MBX-APIKEY': self._public_key}
 
         self.contracts = self.get_contracts()
