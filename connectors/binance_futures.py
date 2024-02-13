@@ -26,7 +26,7 @@ class BinanceFuturesClient:
     def __init__(self, public_key: str, secret_key: str, testnet: bool):
         if testnet:
             self._base_url = "https://testnet.binancefuture.com"
-            self._wss_url = "wss://testnet.binancefuture.com/ws"
+            self._wss_url = "wss://stream.binancefuture.com/ws" 
         else:
             self._base_url = "https://fapi.binance.com"
             self._wss_url = "wws://fstream.binance.com/ws"

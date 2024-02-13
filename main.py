@@ -1,9 +1,19 @@
 import logging
+import os
+from dotenv import load_dotenv
 
 from connectors.binance_futures import BinanceFuturesClient
 from connectors.bitmex import BitmexClient
 
 from interface.root_component import Root
+
+# Load environment variables from .env file
+load_dotenv()
+
+binance_public_key = os.environ.get('BINANCE_TESTNET_PUBLIC_KEY')
+binance_secret_key = os.environ.get('BINANCE_TESTNET_SECRET_KEY')
+bitmex_public_key =  os.environ.get('BITMEX_TESTNET_PUBLIC_KEY')
+bitmex_secret_key = os.environ.get('BITMEX_TESTNET_SECRET_KEY')
 
 logger = logging.getLogger()
 
@@ -24,8 +34,8 @@ logger.addHandler(file_handler)
 
 if __name__ == '__main__':
 
-    binance = BinanceFuturesClient("", "", True)
-    bitmex = BitmexClient("", "", True)
+    binance = BinanceFuturesClient(binance_public_key, binance_secret_key, True)
+    bitmex = BitmexClient(bitmex_public_key, bitmex_secret_key, True)
 
     root = Root(binance, bitmex)
     root.mainloop()

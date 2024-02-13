@@ -40,7 +40,7 @@ class StrategyEditor(tk.Frame):
 
         self.body_widgets = dict()
 
-        self._headers = ["Strategy", "Contract", "Timeframe", "Balance %", "TP %", "SL %"]
+        self._headers = ["Strategy", "Contract", "Timeframe", "Balance %", "Take Profit %", "Stop Loss %"]
 
         self._additional_parameters = dict()
         self._extra_input = dict()
