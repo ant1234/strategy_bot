@@ -11,9 +11,20 @@ class Autocomplete(tk.Entry):
         self._lb: tk.Listbox
         self._lb_open = False
 
+        self.bind("<Up>", self._up_down)
+        self.bind("<Down>", self._up_down)
+        self.bind("<Right>", self._select)
+
         self._var = tk.StringVar()
         self.configure(textvariable=self._var)
         self._var.trace("w", self._changed)
+
+    def _select(self, event: tk.Event):
+        if self._lb_open:
+            self._var.set(self._lb.get(tk.ACTIVE))
+            self._lb.destroy()
+            self._lb_open = False
+            self.icursor(tk.END)
 
     def _changed(self, var_name: str, index: str, mode: str):
 
@@ -47,5 +58,28 @@ class Autocomplete(tk.Entry):
             else:
                 if self._lb_open:
                     self._lb.destroy()
-                    self._lb_open = False                
+                    self._lb_open = False    
+
+    def _up_down(self, event: tk.Event):
+
+        index = 0
+
+        if self._lb_open:
+            if self._lb.curselection() == ():
+                index -1
+            else:
+                index = self._lb.curselection()[0]
+
+            lb_size = self._lb.size()
+
+            if index > 0 and event.keysym == "Up":
+                self._lb.select_clear(first=index)
+                index = str(index -1)
+                self._lb.selection_set(first=index)
+                self._lb.activate(index)
+            elif index < lb_size -1 and event.keysym == "Down":
+                self._lb.select_clear(first=index)
+                index = str(index + 1)
+                self._lb.selection_set(first=index)
+                self._lb.activate(index)
 
