@@ -27,6 +27,13 @@ class Root(tk.Tk):
 
         self.configure(bg=BG_COLOR)
 
+        self.main_menu = tk.Menu(self)
+        self.configure(menu=self.main_menu)
+
+        self.workspace_menu = tk.Menu(self.main_menu, tearoff=False)
+        self.main_menu.add_cascade(label="Workspace", menu=self.workspace_menu)
+        self.workspace_menu.add_command(label="Save workspace", command=self._save_workspace)
+
         self._left_frame = tk.Frame(self, bg=BG_COLOR)
         self._left_frame.pack(side=tk.LEFT)
 
@@ -146,3 +153,6 @@ class Root(tk.Tk):
 
 
         self.after(1500, self._update_ui)
+    
+    def _save_workspace(self):
+        # Watchlist
