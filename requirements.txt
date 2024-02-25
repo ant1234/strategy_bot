@@ -1,0 +1,7 @@
+pandas==2.2.1
+python-dotenv==1.0.1
+python_dateutil==2.8.2
+python_dateutil==2.8.1
+Requests==2.31.0
+tkmacosx==1.0.5
+websocket_client==0.58.0
