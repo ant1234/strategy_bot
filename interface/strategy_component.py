@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import typing
 import tkmacosx as tkmac
 
@@ -62,11 +63,11 @@ class StrategyEditor(tk.Frame):
         # This lets the program create the widgets dynamically and it takes less space in the code
         # The width may need to be adjusted depending on your screen size and resolution
         self._base_params = [
-            {"code_name": "strategy_type", "widget": tk.OptionMenu, "data_type": str,
+            {"code_name": "strategy_type", "widget": ttk.Combobox, "data_type": str,
              "values": ["Technical", "Breakout"], "width": 10, "header": "Strategy"},
-            {"code_name": "contract", "widget": tk.OptionMenu, "data_type": str, "values": self._all_contracts,
+            {"code_name": "contract", "widget": ttk.Combobox, "data_type": str, "values": self._all_contracts,
              "width": 15, "header": "Contract"},
-            {"code_name": "timeframe", "widget": tk.OptionMenu, "data_type": str, "values": self._all_timeframes,
+            {"code_name": "timeframe", "widget": ttk.Combobox, "data_type": str, "values": self._all_timeframes,
              "width": 10, "header": "Timeframe"},
             {"code_name": "balance_pct", "widget": tk.Entry, "data_type": float, "width": 10, "header": "Balance %"},
             {"code_name": "take_profit", "widget": tk.Entry, "data_type": float, "width": 7, "header": "TP %"},
@@ -136,7 +137,16 @@ class StrategyEditor(tk.Frame):
                 self.body_widgets[code_name][b_index] = tk.OptionMenu(self._body_frame.sub_frame,
                                                                       self.body_widgets[code_name + "_var"][b_index],
                                                                       *base_param['values'])
-                self.body_widgets[code_name][b_index].config(width=base_param['width'], bd=0, indicatoron=0)
+                self.body_widgets[code_name][b_index].config(width=base_param['width'])
+            elif base_param["widget"] == ttk.Combobox:
+                self.body_widgets[code_name][b_index] = ttk.Combobox(
+                    self._body_frame.sub_frame, values=base_param["values"],
+                    justify=tk.CENTER, state="readonly"
+                )
+                combox_box = self.body_widgets[code_name][b_index]
+                combox_box.set(base_param["values"][0])
+                combox_box.config(width=base_param["width"])
+                self.body_widgets[f"{code_name}_var"][b_index] = combox_box
 
             elif base_param['widget'] == tk.Entry:
                 self.body_widgets[code_name][b_index] = tk.Entry(self._body_frame.sub_frame, justify=tk.CENTER,
